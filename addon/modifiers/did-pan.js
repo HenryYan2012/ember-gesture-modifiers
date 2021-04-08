@@ -33,9 +33,9 @@ export default class DidPanModifier extends Modifier {
 
     if (this.pointerTypes?.includes('mouse')) {
       document.addEventListener('pointermove', this.documentPointerMove, { capture: this.capture, passive: !this.preventScroll });
-      document.addEventListener('pointercancel', this.documentPointerUp, { capture: this.capture, passive: true });
-      document.addEventListener('pointerup', this.documentPointerUp, { capture: this.capture, passive: true });
     }
+    document.addEventListener('pointercancel', this.documentPointerUp, { capture: this.capture, passive: true });
+    document.addEventListener('pointerup', this.documentPointerUp, { capture: this.capture, passive: true });
   }
 
   removeEventListeners() {
@@ -48,9 +48,9 @@ export default class DidPanModifier extends Modifier {
 
     if (this.pointerTypes?.includes('mouse')) {
       document.removeEventListener('pointermove', this.documentPointerMove, { capture: this.capture, passive: !this.preventScroll });
-      document.removeEventListener('pointercancel', this.documentPointerUp, {capture: this.capture, passive: true});
-      document.removeEventListener('pointerup', this.documentPointerUp, {capture: this.capture, passive: true});
     }
+    document.removeEventListener('pointercancel', this.documentPointerUp, {capture: this.capture, passive: true});
+    document.removeEventListener('pointerup', this.documentPointerUp, {capture: this.capture, passive: true});
   }
 
   @action
