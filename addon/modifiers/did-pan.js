@@ -48,7 +48,7 @@ export default class DidPanModifier extends Modifier {
       passive: true,
     });
 
-    # Fix issue when pan up till out of the window.
+    // Fix issue when pan up till out of the window.
     document.addEventListener('pointerup', this.didTouchEnd, {
       capture: this.capture,
       passive: true
@@ -94,7 +94,7 @@ export default class DidPanModifier extends Modifier {
       passive: true,
     });
 
-    # Fix issue when pan up till out of the window.
+    // Fix issue when pan up till out of the window.
     document.removeEventListener('pointerup', this.didTouchEnd, {
       capture: this.capture,
       passive: true
