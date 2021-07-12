@@ -48,6 +48,16 @@ export default class DidPanModifier extends Modifier {
       passive: true,
     });
 
+    # Fix issue when pan up till out of the window.
+    document.addEventListener('pointerup', this.didTouchEnd, {
+      capture: this.capture,
+      passive: true
+    });
+    document.addEventListener('pointercancel', this.didTouchEnd, {
+      capture: this.capture,
+      passive: true
+    });
+
     if (this.pointerTypes?.includes('mouse')) {
       document.addEventListener('pointermove', this.documentPointerMove, {
         capture: this.capture,
@@ -82,6 +92,16 @@ export default class DidPanModifier extends Modifier {
     this.element.removeEventListener('pointercancel', this.didTouchEnd, {
       capture: this.capture,
       passive: true,
+    });
+
+    # Fix issue when pan up till out of the window.
+    document.removeEventListener('pointerup', this.didTouchEnd, {
+      capture: this.capture,
+      passive: true
+    });
+    document.removeEventListener('pointercancel', this.didTouchEnd, {
+      capture: this.capture,
+      passive: true
     });
 
     if (this.pointerTypes?.includes('mouse')) {
