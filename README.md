@@ -1,3 +1,7 @@
+This fork fixed the issue described in https://github.com/nickschot/ember-gesture-modifiers/issues/29. 
+
+=== Original README ===
+
 ember-gesture-modifiers
 ==============================================================================
 
