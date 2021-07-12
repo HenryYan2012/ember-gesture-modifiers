@@ -8,7 +8,7 @@ function timeout(duration) {
 }
 
 function nextTickPromise() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve);
   });
 }
@@ -29,46 +29,74 @@ function getElement(target) {
   }
 }
 
-function sendEvent(element, type, x, y, pointerType){
+function sendEvent(element, type, x, y, pointerType) {
   const event = createPointerEvent(element, type, x, y, 0, pointerType);
   element.dispatchEvent(event);
 }
 
-// currently only horizontal
-async function _pan(element, options = {}){
-  const {
-    clientTop: top,
-    clientLeft: left,
-    clientWidth: width,
-    clientHeight: height
-  } = element;
-
-  const right = left + width;
-  const isLeft = options.direction === 'left';
+async function _pan(element, options = {}) {
+  const { top, left, width, height } = element.getBoundingClientRect();
 
   const {
-    startX = isLeft ? right - 1 : left + 1,
-    endX = isLeft ? left + 1 : right - 1,
+    direction = 'right',
     duration = 300,
     resolution = 17, // ms per step
     pointerType,
   } = options;
 
-  const steps = Math.ceil(duration / resolution);
-  const middleY = top + height/2;
+  const right = left + width;
+  const bottom = top + height;
 
-  sendEvent(document, 'pointerdown', startX, middleY, pointerType);
-  sendEvent(element, 'pointerdown', startX, middleY, pointerType);
-  for(let i = 1; i < steps; i++){
+  const middleX = left + width / 2;
+  const middleY = top + height / 2;
+
+  const {
+    startX = direction === 'left'
+      ? right - 1
+      : direction === 'right' || direction === 'up-right'
+      ? left + 1
+      : middleX,
+    endX = direction === 'left'
+      ? left + 1
+      : direction === 'right' || direction === 'up-right'
+      ? right - 1
+      : middleX,
+    startY = direction === 'up' || direction === 'up-right'
+      ? bottom - 1
+      : direction === 'down'
+      ? top + 1
+      : middleY,
+    endY = direction === 'up' || direction === 'up-right'
+      ? top + 1
+      : direction === 'down'
+      ? bottom - 1
+      : middleY,
+  } = options;
+
+  const steps = Math.ceil(duration / resolution);
+
+  sendEvent(document, 'pointerdown', startX, startY, pointerType);
+  sendEvent(element, 'pointerdown', startX, startY, pointerType);
+  for (let i = 1; i < steps; i++) {
     await timeout(resolution);
-    const x = isLeft
-      ? startX - (startX - endX)/steps*i
-      : (endX - startX)/steps * i;
-    sendEvent(document, 'pointermove', x, middleY, pointerType);
-    sendEvent(element, 'pointermove', x, middleY, pointerType);
+    const x =
+      direction === 'left'
+        ? startX - ((startX - endX) / steps) * i
+        : direction === 'right' || direction === 'up-right'
+        ? startX + ((endX - startX) / steps) * i
+        : middleX;
+    const y =
+      direction === 'up' || direction === 'up-right'
+        ? startY - ((startY - endY) / steps) * i
+        : direction === 'down'
+        ? startY + ((endY - startY) / steps) * i
+        : middleY;
+
+    sendEvent(document, 'pointermove', x, y, pointerType);
+    sendEvent(element, 'pointermove', x, y, pointerType);
   }
-  sendEvent(document, 'pointerup', endX, middleY, pointerType);
-  sendEvent(element, 'pointerup', endX, middleY, pointerType);
+  sendEvent(document, 'pointerup', endX, endY, pointerType);
+  sendEvent(element, 'pointerup', endX, endY, pointerType);
 }
 
 export default async function pan(target, direction, pointerType) {
